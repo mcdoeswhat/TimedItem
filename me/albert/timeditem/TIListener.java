@@ -5,12 +5,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.potion.PotionEffect;
 
 import java.util.Date;
 
@@ -30,18 +30,17 @@ public class TIListener implements Listener {
 
 
     }
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler
     public void onInteract(PlayerInteractEvent e){
-        if (e.getPlayer().getGameMode().equals(GameMode.CREATIVE)){
-            return;
-        }
-        if (e.getPlayer().getInventory().getItemInMainHand() == null ||
-                e.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR){
-            return;
-        }
-        ItemStack is = e.getPlayer().getInventory().getItemInMainHand();
-        Player p =e.getPlayer();
-        checkItem(is,p,true);
+            if (e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+                return;
+            }
+            if (e.getItem() == null || e.getItem().getType() == Material.AIR) {
+                return;
+            }
+            ItemStack is = e.getItem();
+            Player p = e.getPlayer();
+            checkItem(is, p, true);
     }
 
     @EventHandler (ignoreCancelled = true)

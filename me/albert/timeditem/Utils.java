@@ -14,11 +14,10 @@ public class Utils {
     public static String s,m,h,d;
     public static String[] time = {"s","m","h","d"};
     static {
-        Config config = new Config();
-        s = config.time_s;
-        m = config.time_m;
-        h = config.time_h;
-        d = config.time_d;
+        s = Config.time_s;
+        m = Config.time_m;
+        h = Config.time_h;
+        d = Config.time_d;
     }
     public static Boolean isTIitem(ItemStack is){
         ItemMeta meta = is.getItemMeta();
