@@ -1,21 +1,24 @@
 package me.albert.timeditem;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Date;
 
 
 public class TIListener implements Listener {
+    BukkitScheduler server = Bukkit.getServer().getScheduler();
     @EventHandler (ignoreCancelled = true)
     public void onClick(InventoryClickEvent e){
         if (e.getWhoClicked().getGameMode().equals(GameMode.CREATIVE)){
@@ -26,10 +29,12 @@ public class TIListener implements Listener {
         }
         ItemStack is = e.getCurrentItem();
         Player p = (Player)e.getWhoClicked();
-        checkItem(is,p,Config.on_click);
+        checkItem(is,p,Config.on_click,false);
 
 
     }
+
+
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
             if (e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
@@ -40,7 +45,24 @@ public class TIListener implements Listener {
             }
             ItemStack is = e.getItem();
             Player p = e.getPlayer();
-            checkItem(is, p, true);
+            checkItem(is, p, true,false);
+    }
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        server.scheduleSyncDelayedTask(Main.getInstance(),() -> {
+            PlayerInventory inv = e.getPlayer().getInventory();
+            for (int i=0;i<inv.getSize();i++){
+                ItemStack is = inv.getItem(i);
+                if (is !=null && is.getType() != Material.AIR){
+                    checkItem(is,e.getPlayer(),true,true);
+                }
+
+            }
+
+        });
+
+
+
     }
 
     @EventHandler (ignoreCancelled = true)
@@ -56,14 +78,14 @@ public class TIListener implements Listener {
         ItemStack[] armors = inv.getArmorContents();
         for (ItemStack is : armors){
             if (is != null && is.getType() != Material.AIR){
-                checkItem(is,p,true);
+                checkItem(is,p,true,true);
             }
 
         }
 
 
     }
-    public void checkItem(ItemStack is, Player p,Boolean b){
+    public void checkItem(ItemStack is, Player p,Boolean b,Boolean armor ){
         if (!Utils.isTIitem(is)){
             return;
         }
@@ -74,7 +96,10 @@ public class TIListener implements Listener {
                 if (Utils.getDate(is).before(date)) {
                     playSound(p);
                     is.setAmount(0);
-                    p.setMaxHealth(20);
+                    if (armor && Config.reset_player_health_if_armor){
+                        p.setMaxHealth(20);
+                    }
+
                     p.sendMessage(Config.prefix + Config.expire);
                 }
                 return;

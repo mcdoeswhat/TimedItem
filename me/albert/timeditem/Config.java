@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 public class Config {
     public static String prefix,expire,expires_at,useful_life,
             time_s,time_m,time_h,time_d,invalid_usage,config_reload,time_set,no_item;
-    public static boolean on_click,Sounds;
+    public static boolean on_click,Sounds,reset_player_health_if_armor;
     static {
         loadConfig();
     }
@@ -26,6 +26,8 @@ public class Config {
                 .getConfig().getBoolean("Settings.start_date_calculate_on_click");
         Sounds = Main.getInstance()
                 .getConfig().getBoolean("Settings.Sounds");
+        reset_player_health_if_armor = Main.getInstance()
+                .getConfig().getBoolean("Settings.reset_player_health_if_armor");
     }
 
     public static String getConfigString(String key){
